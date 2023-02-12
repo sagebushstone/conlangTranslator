@@ -3,13 +3,16 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 lemmatizer = nlp.get_pipe("lemmatizer")
 
-doc = nlp("the woods are pretty")
+doc = nlp("the road was long and we went to the store")
 for token in doc:
    print(token.text, token.pos_, token.dep_, token.tag_)
 
 # VARIABLES TO BE CHANGED IN FUNCTIONS
 verbTense = ""
 verbLemma = ""
+
+performer = ""
+
 
 # VERB FUNCTION
 def verb():
@@ -24,13 +27,37 @@ def verb():
         verbTense = "we"
 
     verbLemma = token.lemma_
-    
     return
+
+# PRONOUN/SUBJECT FUNCTION
+def subject():
+    global performer
+
+    if(token.text == "I" or token.text == "me"):
+        performer = "eo"
+    elif(token.text == "you"):
+        performer = "a"
+    elif(token.text == "we"):
+        performer = "as"
+    elif(token.text == "he"):
+        performer = "e"
+    elif(token.text == "she"):
+        performer = "u"
+    elif(token.text == "they" or token.tag_ == "NNP" or token.tag_ == "NNS"): # how to accomodate for sing. they? and mult he/she for that matter?
+        performer = "os"
+    else:
+        performer = "dat" # NEED TO MAKE EXTRA FUNCTION FOR OTHER POSSIBILITIES... IT, THAT, WHO, WHICH... including plurals
+    return
+
 
 print([token.lemma_ for token in doc])
 
 for token in doc:
     if(token.pos_ == "VERB" or token.pos_ == "AUX"): # accounts for verbs and "be" ... not "should" or others
         verb()
-        print(verbTense + "'" + token.text + " or " + verbTense + "'" + verbLemma)
+        #print(verbTense + "'" + token.text + " or " + verbTense + "'" + verbLemma)
+    if(token.dep_ == "nsubj"):
+        subject()
+
+print(verbTense + "'" + performer + "'" + verbLemma)
 
