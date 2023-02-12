@@ -3,7 +3,7 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 lemmatizer = nlp.get_pipe("lemmatizer")
 
-doc = nlp("the road was long and we went to the store")
+doc = nlp("i want to eat")
 for token in doc:
    print(token.text, token.pos_, token.dep_, token.tag_)
 
@@ -46,9 +46,20 @@ def subject():
     elif(token.text == "they" or token.tag_ == "NNP" or token.tag_ == "NNS"): # how to accomodate for sing. they? and mult he/she for that matter?
         performer = "os"
     else:
-        performer = "dat" # NEED TO MAKE EXTRA FUNCTION FOR OTHER POSSIBILITIES... IT, THAT, WHO, WHICH... including plurals
+        otherSub() # NEED TO MAKE EXTRA FUNCTION FOR OTHER POSSIBILITIES... IT, THAT, WHO, WHICH... including plurals
     return
 
+# OTHER SUBJECT FUNCTION
+def otherSub():
+    global performer
+    if(token.text == "that"):
+        performer = "kata"
+    elif(token.text == "this"):
+        performer = "kat"
+    else: # need to add in "those"
+        performer = "dat"
+
+    return
 
 print([token.lemma_ for token in doc])
 
