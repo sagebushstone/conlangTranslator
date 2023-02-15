@@ -1,11 +1,34 @@
 import spacy
+import mysql.connector
+import os
 
+# loaded from spacy
 nlp = spacy.load("en_core_web_sm")
 lemmatizer = nlp.get_pipe("lemmatizer")
 
-doc = nlp("i want to eat")
+# grabs mysql password from environmental variable
+sqlpass = os.getenv("sqlpass")
+
+# connect to mysql database of vocabulary
+vocab = mysql.connector.connect(
+    host = "127.0.0.1",
+    user = "root",
+    password = sqlpass,
+    database = "keshkavocab"
+)
+cursor = vocab.cursor()
+
+# mysql test - delete later
+cursor.execute("SELECT keshka FROM vocab")
+result = cursor.fetchall()
+print(result)
+
+doc = nlp("i went to school and the store")
+
+engDepend = []
 for token in doc:
-   print(token.text, token.pos_, token.dep_, token.tag_)
+    engDepend.append(token.dep_)
+    print(token.text, token.pos_, token.dep_, token.tag_)
 
 # VARIABLES TO BE CHANGED IN FUNCTIONS
 verbTense = ""
@@ -71,4 +94,7 @@ for token in doc:
         subject()
 
 print(verbTense + "'" + performer + "'" + verbLemma)
+print(engDepend)
+
+
 
