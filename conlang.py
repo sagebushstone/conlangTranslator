@@ -18,12 +18,7 @@ vocab = mysql.connector.connect(
 )
 cursor = vocab.cursor()
 
-# mysql test - delete later
-cursor.execute("SELECT keshka FROM vocab")
-result = cursor.fetchall()
-print(result)
-
-doc = nlp("i went to school and the store")
+doc = nlp("farm")
 
 engDepend = []
 for token in doc:
@@ -34,8 +29,40 @@ for token in doc:
 verbTense = ""
 verbLemma = ""
 
+nounLemma = ""
+keshkaNoun = ""
+stateOfBeing = ""
+
 performer = ""
 
+
+# NOUN FUNCTION
+def noun():
+    global keshkaNoun
+    global stateOfBeing
+    nounLemma = token.lemma_
+    cursor.execute("SELECT keshka FROM vocab WHERE english='%s'" % (nounLemma)) # gets keshka translation of noun
+    keshkaNoun = cursor.fetchall()
+    cursor.execute("SELECT stateofbeing FROM vocab WHERE english='%s'" % (nounLemma)) # gets state of being of noun - still need to assign u, e, o
+    stateOfBeing = cursor.fetchall() # NEED TO MAKE THIS A VARIABLE, not a list - USE "SET"
+    if(stateOfBeing == "animate"):
+        if(token.dep_ == "NN"):
+            stateOfBeing = "e"
+        else:
+            stateOfBeing = "es"
+    elif(stateOfBeing == "inanimate"):
+        if(token.dep_ == "NN"):
+            stateOfBeing = "u"
+        else:
+            stateOfBeing = "us"
+    elif(stateOfBeing == "abstract"):
+        if(token.dep_ == "NN"):
+            stateOfBeing = "o"
+        else:
+            stateOfBeing = "os"
+
+    print(stateOfBeing)
+    return
 
 # VERB FUNCTION
 def verb():
@@ -92,6 +119,8 @@ for token in doc:
         #print(verbTense + "'" + token.text + " or " + verbTense + "'" + verbLemma)
     if(token.dep_ == "nsubj"):
         subject()
+    if(token.pos_ == "NOUN"):
+        noun()
 
 print(verbTense + "'" + performer + "'" + verbLemma)
 print(engDepend)
