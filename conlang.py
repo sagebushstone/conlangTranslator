@@ -31,7 +31,7 @@ verbLemma = ""
 
 nounLemma = ""
 keshkaNoun = ""
-stateOfBeing = ""
+keshkaSoB = ""
 
 performer = ""
 
@@ -39,29 +39,30 @@ performer = ""
 # NOUN FUNCTION
 def noun():
     global keshkaNoun
-    global stateOfBeing
+    global keshkaSoB
     nounLemma = token.lemma_
-    cursor.execute("SELECT keshka FROM vocab WHERE english='%s'" % (nounLemma)) # gets keshka translation of noun
+    cursor.execute("SELECT keshka FROM keshkavocab.vocab WHERE english='%s'" % (nounLemma)) # gets keshka translation of noun
     keshkaNoun = cursor.fetchall()
-    cursor.execute("SELECT stateofbeing FROM vocab WHERE english='%s'" % (nounLemma)) # gets state of being of noun - still need to assign u, e, o
-    stateOfBeing = cursor.fetchall() # NEED TO MAKE THIS A VARIABLE, not a list - USE "SET"
+    cursor.execute("SELECT stateofbeing FROM keshkavocab.vocab WHERE english='%s'" % (nounLemma)) # gets state of being of noun
+    stateOfBeing = cursor.fetchone()[0]
     if(stateOfBeing == "animate"):
-        if(token.dep_ == "NN"):
-            stateOfBeing = "e"
+        if(token.tag_ == "NN"):
+            keshkaSoB = "e"
         else:
-            stateOfBeing = "es"
+            keshkaSoB = "es"
     elif(stateOfBeing == "inanimate"):
-        if(token.dep_ == "NN"):
-            stateOfBeing = "u"
+        if(token.tag_ == "NN"):
+            keshkaSoB = "u"
         else:
-            stateOfBeing = "us"
+            keshkaSoB = "us"
     elif(stateOfBeing == "abstract"):
-        if(token.dep_ == "NN"):
-            stateOfBeing = "o"
+        if(token.tag_ == "NN"):
+            keshkaSoB = "o"
         else:
-            stateOfBeing = "os"
+            keshkaSoB = "os"
 
     print(stateOfBeing)
+    print(keshkaSoB)
     return
 
 # VERB FUNCTION
