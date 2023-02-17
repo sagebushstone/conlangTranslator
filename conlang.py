@@ -18,7 +18,7 @@ vocab = mysql.connector.connect(
 )
 cursor = vocab.cursor()
 
-doc = nlp("farm")
+doc = nlp("animals")
 
 engDepend = []
 for token in doc:
@@ -29,7 +29,6 @@ for token in doc:
 verbTense = ""
 verbLemma = ""
 
-nounLemma = ""
 keshkaNoun = ""
 keshkaSoB = ""
 
@@ -40,10 +39,9 @@ performer = ""
 def noun():
     global keshkaNoun
     global keshkaSoB
-    nounLemma = token.lemma_
-    cursor.execute("SELECT keshka FROM keshkavocab.vocab WHERE english='%s'" % (nounLemma)) # gets keshka translation of noun
+    cursor.execute("SELECT keshka FROM keshkavocab.vocab WHERE english='%s'" % (token.lemma_)) # gets keshka translation of noun
     keshkaNoun = cursor.fetchall()
-    cursor.execute("SELECT stateofbeing FROM keshkavocab.vocab WHERE english='%s'" % (nounLemma)) # gets state of being of noun
+    cursor.execute("SELECT stateofbeing FROM keshkavocab.vocab WHERE english='%s'" % (token.lemma_)) # gets state of being of noun
     stateOfBeing = cursor.fetchone()[0]
     if(stateOfBeing == "animate"):
         if(token.tag_ == "NN"):
@@ -117,7 +115,6 @@ print([token.lemma_ for token in doc])
 for token in doc:
     if(token.pos_ == "VERB" or token.pos_ == "AUX"): # accounts for verbs and "be" ... not "should" or others
         verb()
-        #print(verbTense + "'" + token.text + " or " + verbTense + "'" + verbLemma)
     if(token.dep_ == "nsubj"):
         subject()
     if(token.pos_ == "NOUN"):
